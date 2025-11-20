@@ -34,7 +34,6 @@ public class AuthorRepository(AppDbContext dbContext) : IAuthorRepository
 
     public async Task<bool> UpdateAuthor(Author author)
     {
-        dbContext.Authors.Update(author);
         await dbContext.SaveChangesAsync();
         return true;
     }

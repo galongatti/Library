@@ -28,7 +28,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     }
     
     
-    [HttpPut("/{id:int}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateAuthor model)
     {
         bool sucess = await authorService.UpdateAuthor(id, model);
@@ -38,7 +38,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
         return BadRequest();
     }
     
-    [HttpDelete("/{id:int}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         bool sucess = await authorService.DeleteAuthor(id);
@@ -48,7 +48,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
         return BadRequest();
     }
     
-    [HttpGet("/{id:int}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> Get([FromRoute] int id)
     {
         Author? author = await authorService.GetAuthorByIdNoTracking(id);
