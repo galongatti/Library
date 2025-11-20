@@ -1,5 +1,6 @@
 using Library.Context;
 using Library.Model.Entities;
+using Library.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Repository;
@@ -8,8 +9,10 @@ public class AuthorRepository(AppDbContext dbContext) : IAuthorRepository
 {
     public async Task<List<Author>> GetAuthorByName(string name)
     {
+        string cleanName = Escape.EscapeLike(name);
+        
         List<Author> res = await (from author in dbContext.Authors.AsNoTracking()
-            where EF.Functions.Like(author.Name, $"%{name}%")
+            where EF.Functions.Like(author.Name, cleanName)
             select author).ToListAsync();
 
         return res;
