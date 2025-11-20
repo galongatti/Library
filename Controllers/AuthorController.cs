@@ -23,7 +23,8 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     public async Task<IActionResult> Get()
     {
         List<Author> authors = await authorService.GetAuthors();
-        return Ok(authors);
+        List<ReadAuthor> readAuthors = ReadAuthor.FromAuthors(authors);
+        return Ok(readAuthors);
     }
     
     
@@ -51,12 +52,10 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     public async Task<IActionResult> Get([FromRoute] int id)
     {
         Author? author = await authorService.GetAuthorByIdNoTracking(id);
-        
-        if(author is not null) return Ok(author);
-        
-        return BadRequest();
+
+        if (author is null) return BadRequest();
+        ReadAuthor readAuthor = ReadAuthor.FromAuthor(author);
+        return Ok(readAuthor);
     }
-    
-    
     
 }

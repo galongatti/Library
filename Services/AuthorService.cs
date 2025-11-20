@@ -1,3 +1,4 @@
+using Library.Exceptions;
 using Library.Model.DTO;
 using Library.Model.Entities;
 using Library.Repository;
@@ -28,7 +29,7 @@ public class AuthorService(IAuthorRepository repository) : IAuthorService
         Author? authorExist = await repository.GetAuthorByIdTracking(id);
         
         if( authorExist is null)
-            throw new Exception("Author not found");
+            throw new AuthorException("Author not found");
         
         authorExist.Update(author.Name);
         
@@ -40,15 +41,18 @@ public class AuthorService(IAuthorRepository repository) : IAuthorService
         Author? authorExist = await repository.GetAuthorByIdTracking(id);
         
         if( authorExist is null)
-            throw new Exception("Author not found");
+            throw new AuthorException("Author not found");
         
         authorExist.SetAsDeleted();
         
         return await repository.UpdateAuthor(authorExist);
     }
 
-    public Task<Author?> GetAuthorByIdNoTracking(int id)
+    public async Task<Author?> GetAuthorByIdNoTracking(int id)
     {
-        return repository.GetAuthorByIdNoTracking(id);
+        
+        Author? author = await repository.GetAuthorByIdNoTracking(id);
+        
+        return author ?? throw new AuthorException("Author not found");
     }
 }

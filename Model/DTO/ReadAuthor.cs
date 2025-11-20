@@ -18,5 +18,5 @@ public class ReadAuthor
     }
 
     public static ReadAuthor FromAuthor(Author author) => new(author.Name, author.Id, author.CreatedAt, author.IsDeleted);
-
+    public static List<ReadAuthor> FromAuthors(List<Author> authors) => authors.Select(author => FromAuthor(author)).ToList();
 }
