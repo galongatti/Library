@@ -10,5 +10,7 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
     {
        authorBuilder.HasKey(a => a.Id);
        authorBuilder.Property(a => a.Name).IsRequired().HasMaxLength(255);
+       
+      
     }
 }

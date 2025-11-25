@@ -31,9 +31,9 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateAuthor model)
     {
-        bool sucess = await authorService.UpdateAuthor(id, model);
+        bool ok = await authorService.UpdateAuthor(id, model);
         
-        if(sucess) return Ok();
+        if(ok) return Ok();
         
         return BadRequest();
     }
@@ -41,9 +41,9 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        bool sucess = await authorService.DeleteAuthor(id);
+        bool ok = await authorService.DeleteAuthor(id);
         
-        if(sucess) return Ok();
+        if(ok) return Ok();
         
         return BadRequest();
     }

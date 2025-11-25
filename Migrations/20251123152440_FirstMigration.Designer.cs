@@ -3,6 +3,7 @@ using System;
 using Library.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251123152440_FirstMigration")]
+    partial class FirstMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +33,17 @@ namespace Library.Migrations
                     b.Property<int>("BooksId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("AuthorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("BookId")
+                        .HasColumnType("integer");
+
                     b.HasKey("AuthorsId", "BooksId");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("BookId");
 
                     b.HasIndex("BooksId");
 
@@ -125,9 +138,17 @@ namespace Library.Migrations
                 {
                     b.HasOne("Library.Model.Entities.Author", null)
                         .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("Library.Model.Entities.Author", null)
+                        .WithMany()
                         .HasForeignKey("AuthorsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Library.Model.Entities.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BookId");
 
                     b.HasOne("Library.Model.Entities.Book", null)
                         .WithMany()
