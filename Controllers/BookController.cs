@@ -15,7 +15,7 @@ public class BookController(IBookService bookService) : ControllerBase
     public async Task<IActionResult> Create(CreateBook model)
     {
         Book book = await bookService.CreateBook(model);
-        return Ok(book);
+        return CreatedAtAction(nameof(Get), new { id = book.Id }, book);
     }
 
 
@@ -62,8 +62,7 @@ public class BookController(IBookService bookService) : ControllerBase
     public async Task<IActionResult> Get([FromRoute] int id)
     {
         Book? book = await bookService.GetBookByIdNoTracking(id);
-
-        if (book is null) return BadRequest();
+     
         ReadBook readBook = ReadBook.FromBook(book);
         return Ok(readBook);
     }

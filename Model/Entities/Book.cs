@@ -4,8 +4,8 @@ public class Book : BaseEntity
 {
     public string Title { get; private set; }
     public string ISBN { get; private set; }
-    public List<Author> Authors { get; private set; }
-    public int PublishedYear { get; private set; }
+    public List<Author> Authors { get; private set; } = [];
+    public int PublishedYear { get; private set; } 
     public int CategoryId { get; private set; }
     public Category Category { get; private set; }
     

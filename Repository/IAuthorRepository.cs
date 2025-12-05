@@ -10,4 +10,5 @@ public interface IAuthorRepository
     Task<bool> UpdateAuthor(Author author);
     Task<Author?> GetAuthorByIdTracking(int id);
     Task<Author?> GetAuthorByIdNoTracking(int id);
+    Task<List<Author>> GetAuthorsByIds(List<int> ids);
 }

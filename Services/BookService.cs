@@ -7,9 +7,9 @@ namespace Library.Services;
 
 public class BookService(IBookRepository bookRepository, IAuthorRepository authorRepository) : IBookService
 {
-    public Task<List<Book>> GetBookByName(string name)
+    public async Task<List<Book>> GetBookByName(string name)
     {
-        return bookRepository.GetBookByName(name);
+        return await bookRepository.GetBookByName(name);
     }
 
     public async Task<List<Book>> GetBooks()
@@ -26,10 +26,9 @@ public class BookService(IBookRepository bookRepository, IAuthorRepository autho
 
     public async Task<bool> UpdateBook(int id, UpdateBook book)
     {
-
         Book? bookExist = await bookRepository.GetBookByIdTracking(id);
         
-        if( bookExist is null)
+        if(bookExist is null)
             throw new BookException("Book not found");
         
         bookExist.Update(book.Title, book.ISBN, book.PublishedYear, book.CategoryId);
@@ -41,14 +40,15 @@ public class BookService(IBookRepository bookRepository, IAuthorRepository autho
     {
         Book? bookExist = await bookRepository.GetBookByIdTracking(id);
         
-        if( bookExist is null)
+        if(bookExist is null)
             throw new BookException("Book not found");
         
-        List<Author> authors = await authorRepository.GetAuthors();
+        List<Author> authors = await authorRepository.GetAuthorsByIds(bookAuthors.AuthorIds);
         
-        List<Author> bookAuthorsToAdd = authors.Where(a => bookAuthors.AuthorIds.Contains(a.Id)).ToList();
+        if(authors.Count != bookAuthors.AuthorIds.Count)
+            throw new BookException("One or more authors not found");
         
-        bookExist.SetAuthors(bookAuthorsToAdd);
+        bookExist.SetAuthors(authors);
         
         return await bookRepository.UpdateBook(bookExist);
     }
@@ -57,7 +57,7 @@ public class BookService(IBookRepository bookRepository, IAuthorRepository autho
     {
         Book? authorExist = await bookRepository.GetBookByIdTracking(id);
         
-        if( authorExist is null)
+        if(authorExist is null)
             throw new BookException("Book not found");
         
         authorExist.SetAsDeleted();
