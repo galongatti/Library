@@ -1,0 +1,68 @@
+using Library.Model.DTO;
+using Library.Model.Entities;
+using Library.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Library.Controllers;
+
+[ApiController]
+[Route("api/categories")]
+public class CategoryController(ICategoryService categoryService) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<List<ReadCategory>>> GetAll()
+    {
+        List<Category> categories = await categoryService.GetCategories();
+        return Ok(ReadCategory.FromCategories(categories));
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<ReadCategory>> GetById(int id)
+    {
+        Category? category = await categoryService.GetCategoryByIdNoTracking(id);
+        if (category is null)
+            return NotFound();
+        
+        return Ok(ReadCategory.FromCategory(category));
+    }
+
+    [HttpGet("search")]
+    public async Task<ActionResult<List<ReadCategory>>> GetByName([FromQuery] string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return BadRequest("Name is required.");
+        
+        List<Category> categories = await categoryService.GetCategoryByName(name);
+        List<ReadCategory> readCategories = ReadCategory.FromCategories(categories);
+        
+        return Ok(readCategories);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Category>> Create([FromBody] CreateCategory dto)
+    {
+        Category created = await categoryService.CreateCategory(dto);
+        
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> Update(int id, [FromBody] UpdateCategory dto)
+    {
+        bool ok = await categoryService.UpdateCategory(id, dto);
+        
+        if(ok) return Ok();
+        
+        return BadRequest();
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        bool ok = await categoryService.DeleteCategory(id);
+        if(ok) return Ok();
+        
+        return BadRequest();
+    }
+}

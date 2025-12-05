@@ -46,6 +46,11 @@ public class AuthorRepository(AppDbContext dbContext) : IAuthorRepository
         return await dbContext.Authors.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
     }
 
-   
+    public async Task<List<Author>> GetAuthorsByIds(List<int> ids)
+    {
+        return await dbContext.Authors.AsNoTracking()
+            .Where(a => ids.Contains(a.Id))
+            .ToListAsync();
+    }
 }
 
