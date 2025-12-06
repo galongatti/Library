@@ -16,6 +16,8 @@ public static class RegisterServices
         
         services.AddScoped<IBookRepository, BookRepository>();
         services.AddScoped<IBookService, BookService>();
+        
+        services.AddScoped<IUserService, UserService>();
     }
     
 }
