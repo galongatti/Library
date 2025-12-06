@@ -7,7 +7,7 @@ namespace Library.Repository;
 
 public class CategoryRepository(AppDbContext dbContext) : ICategoryRepository
 {
-    public async Task<List<Category>> GetCategoryByName(string name)
+    public async Task<List<Category>> GetCategoryByNameAsync(string name)
     {
         string cleanName = Escape.EscapeLike(name);
         
@@ -18,30 +18,26 @@ public class CategoryRepository(AppDbContext dbContext) : ICategoryRepository
         return res;
     }
 
-    public async Task<List<Category>> GetCategories()
+    public async Task<List<Category>> GetCategoriesAsync()
     {
         return await dbContext.Categories.AsNoTracking().ToListAsync();
     }
 
-    public async Task<Category> CreateCategory(Category author)
+    public async Task<Category> CreateCategoryAsync(Category author)
     {
         dbContext.Categories.Add(author);
         await dbContext.SaveChangesAsync();
         return author;
     }
     
-    public async Task<Category?> GetCategoryByIdTracking(int id)
+    public async Task<bool> UpdateCategoryAsync(Category author)
     {
-        return await dbContext.Categories.FindAsync(id);
-    }
-
-    public async Task<bool> UpdateCategory(Category author)
-    {
+        dbContext.Categories.Update(author);
         await dbContext.SaveChangesAsync();
         return true;
     }
     
-    public async Task<Category?> GetCategoryByIdNoTracking(int id)
+    public async Task<Category?> GetCategoryByIdAsync(int id)
     {
         return await dbContext.Categories.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
     }

@@ -13,14 +13,14 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [HttpGet]
     public async Task<ActionResult<List<ReadCategory>>> GetAll()
     {
-        List<Category> categories = await categoryService.GetCategories();
+        List<Category> categories = await categoryService.GetCategoriesAsync();
         return Ok(ReadCategory.FromCategories(categories));
     }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ReadCategory>> GetById(int id)
     {
-        Category? category = await categoryService.GetCategoryByIdNoTracking(id);
+        Category? category = await categoryService.GetCategoryByIdAsync(id);
         if (category is null)
             return NotFound();
         
@@ -33,7 +33,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
         if (string.IsNullOrWhiteSpace(name))
             return BadRequest("Name is required.");
         
-        List<Category> categories = await categoryService.GetCategoryByName(name);
+        List<Category> categories = await categoryService.GetCategoryByNameAsync(name);
         List<ReadCategory> readCategories = ReadCategory.FromCategories(categories);
         
         return Ok(readCategories);
@@ -42,7 +42,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [HttpPost]
     public async Task<ActionResult<Category>> Create([FromBody] CreateCategory dto)
     {
-        Category created = await categoryService.CreateCategory(dto);
+        Category created = await categoryService.CreateCategoryAsync(dto);
         
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
@@ -50,7 +50,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [HttpPut("{id:int}")]
     public async Task<ActionResult> Update(int id, [FromBody] UpdateCategory dto)
     {
-        bool ok = await categoryService.UpdateCategory(id, dto);
+        bool ok = await categoryService.UpdateCategoryAsync(id, dto);
         
         if(ok) return Ok();
         
@@ -60,7 +60,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {
-        bool ok = await categoryService.DeleteCategory(id);
+        bool ok = await categoryService.DeleteCategoryAsync(id);
         if(ok) return Ok();
         
         return BadRequest();

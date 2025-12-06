@@ -7,7 +7,7 @@ namespace Library.Repository;
 
 public class BookRepository(AppDbContext dbContext) : IBookRepository
 {
-    public async Task<List<Book>> GetBookByName(string name)
+    public async Task<List<Book>> GetBookByNameAsync(string name)
     {
         string cleanName = Escape.EscapeLike(name);
         
@@ -18,30 +18,26 @@ public class BookRepository(AppDbContext dbContext) : IBookRepository
         return res;
     }
 
-    public async Task<List<Book>> GetBooks()
+    public async Task<List<Book>> GetBooksAsync()
     {
         return await dbContext.Books.Include(c => c.Category).Include(a => a.Authors).AsNoTracking().ToListAsync();
     }
 
-    public async Task<Book> CreateBook(Book author)
+    public async Task<Book> CreateBookAsync(Book author)
     {
         dbContext.Books.Add(author);
         await dbContext.SaveChangesAsync();
         return author;
     }
     
-    public async Task<Book?> GetBookByIdTracking(int id)
+    public async Task<bool> UpdateBookAsync(Book author)
     {
-        return await dbContext.Books.FindAsync(id);
-    }
-
-    public async Task<bool> UpdateBook(Book author)
-    {
+        dbContext.Books.Update(author);
         await dbContext.SaveChangesAsync();
         return true;
     }
     
-    public async Task<Book?> GetBookByIdNoTracking(int id)
+    public async Task<Book?> GetBookByIdAsync(int id)
     {
         return await dbContext.Books.Include(c => c.Category).Include(a => a.Authors).AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
     }

@@ -14,7 +14,7 @@ public class BookController(IBookService bookService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateBook model)
     {
-        Book book = await bookService.CreateBook(model);
+        Book book = await bookService.CreateBookAsync(model);
         return CreatedAtAction(nameof(Get), new { id = book.Id }, book);
     }
 
@@ -22,7 +22,7 @@ public class BookController(IBookService bookService) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        List<Book> books = await bookService.GetBooks();
+        List<Book> books = await bookService.GetBooksAsync();
         List<ReadBook> readBooks = ReadBook.FromBooks(books);
         return Ok(readBooks);
     }
@@ -31,7 +31,7 @@ public class BookController(IBookService bookService) : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBook model)
     {
-        bool ok = await bookService.UpdateBook(id, model);
+        bool ok = await bookService.UpdateBookAsync(id, model);
         
         if(ok) return Ok();
         
@@ -41,7 +41,7 @@ public class BookController(IBookService bookService) : ControllerBase
     [HttpPut("{id:int}/authors")]
     public async Task<IActionResult> UpdateBookAuthors([FromRoute] int id, [FromBody] UpdateBookAuthors model)
     {
-        bool ok = await bookService.UpdateBookAuthors(id, model);
+        bool ok = await bookService.UpdateBookAuthorsAsync(id, model);
         
         if(ok) return Ok();
         
@@ -51,7 +51,7 @@ public class BookController(IBookService bookService) : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        bool ok = await bookService.DeleteBook(id);
+        bool ok = await bookService.DeleteBookAsync(id);
         
         if(ok) return Ok();
         
@@ -61,7 +61,7 @@ public class BookController(IBookService bookService) : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get([FromRoute] int id)
     {
-        Book? book = await bookService.GetBookByIdNoTracking(id);
+        Book? book = await bookService.GetBookByIdAsync(id);
      
         ReadBook readBook = ReadBook.FromBook(book);
         return Ok(readBook);
