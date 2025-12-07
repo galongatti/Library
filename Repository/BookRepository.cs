@@ -39,7 +39,7 @@ public class BookRepository(AppDbContext dbContext) : IBookRepository
     
     public async Task<Book?> GetBookByIdAsync(int id)
     {
-        return await dbContext.Books.Include(c => c.Category).Include(a => a.Authors).AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+        return await dbContext.Books.Include(c => c.Category).Include(a => a.Authors).AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
     }
    
 }

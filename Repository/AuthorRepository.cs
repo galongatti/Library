@@ -40,7 +40,7 @@ public class AuthorRepository(AppDbContext dbContext) : IAuthorRepository
     
     public async Task<Author?> GetAuthorByIdAsync(int id)
     {
-        return await dbContext.Authors.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+        return await dbContext.Authors.AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
     }
 
     public async Task<List<Author>> GetAuthorsByIdsAsync(List<int> ids)

@@ -39,7 +39,7 @@ public class CategoryRepository(AppDbContext dbContext) : ICategoryRepository
     
     public async Task<Category?> GetCategoryByIdAsync(int id)
     {
-        return await dbContext.Categories.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+        return await dbContext.Categories.AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
     }
 
    
