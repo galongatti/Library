@@ -43,8 +43,9 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     public async Task<ActionResult<Category>> Create([FromBody] CreateCategory dto)
     {
         Category created = await categoryService.CreateCategoryAsync(dto);
+        ReadCategory readCategory = ReadCategory.FromCategory(created);
         
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, readCategory);
     }
 
     [HttpPut("{id:int}")]

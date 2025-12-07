@@ -12,7 +12,7 @@ public class RolesSeed : IEntityTypeConfiguration<IdentityRole>
         {
             Id = "1A7E2F64-9A1E-4A9E-9B57-2F3028E3A02D", // GUID fixo
             Name = "InternalUser",
-            NormalizedName = "INTERNALUSER"
+            NormalizedName = "INTERNALUSER" 
         };
 
         IdentityRole customer = new IdentityRole

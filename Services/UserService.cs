@@ -23,16 +23,19 @@ public class UserService : IUserService
         _roleManager = roleManager;
     }
 
-    public async Task<User> CreateEmployerAsync(CreateUserEmployer model)
+    public async Task<User> CreateInternalUserAsync(CreateUser model)
     {
         User user = model.ToEntity();
 
         await EnsureRoleExistsAsync(InternalUser);
+        
+        if(await GetUserByUsernameAsync(model.UserName) is not null)
+            throw new UserException("User already exists!");
 
         IdentityResult result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
         {
-            throw new UserException("Error creating EMPLOYER user: " +
+            throw new UserException("Error creating internal user: " +
                                     string.Join("; ", result.Errors.Select(e => e.Description)));
         }
 
@@ -41,16 +44,19 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<User> CreateCustomerAsync(CreateUserCustomer model)
+    public async Task<User> CreateCustomerAsync(CreateUser model)
     {
-        var user = model.ToEntity();
+        User user = model.ToEntity();
 
         await EnsureRoleExistsAsync(CustomerRole);
+        
+        if(await GetUserByUsernameAsync(model.UserName) is not null)
+            throw new UserException("User already exists!");
 
-        var result = await _userManager.CreateAsync(user, model.Password);
+        IdentityResult result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
         {
-            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            string errors = string.Join("; ", result.Errors.Select(e => e.Description));
             throw new UserException("Error creating CUSTOMER user: " + errors);
         }
 
@@ -66,14 +72,6 @@ public class UserService : IUserService
 
     private async Task EnsureRoleExistsAsync(string roleName)
     {
-        if (!await _roleManager.RoleExistsAsync(roleName))
-        {
-            IdentityResult result = await _roleManager.CreateAsync(new IdentityRole(roleName));
-            if (!result.Succeeded)
-            {
-                string errors = string.Join("; ", result.Errors.Select(e => e.Description));
-                throw new UserException("Error creating role '" + roleName + "': " + errors);
-            }
-        }
+        await _roleManager.RoleExistsAsync(roleName);
     }
 }

@@ -15,7 +15,9 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     public async Task<IActionResult> Create(CreateAuthor model)
     {
         Author author = await authorService.CreateAuthorAsync(model);
-        return Ok(author);
+        ReadAuthor readAuthor = ReadAuthor.FromAuthor(author);
+        
+        return CreatedAtAction(nameof(Get), new { id = readAuthor.Id }, readAuthor);
     }
 
 

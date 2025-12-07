@@ -8,7 +8,7 @@ public interface IUserService
 {
     Task<User?> GetUserByUsernameAsync(string username);
     Task<List<User>> GetUsersAsync();
-    Task<User> CreateCustomerAsync(CreateUserCustomer model);
-    Task<User> CreateEmployerAsync(CreateUserEmployer model);
+    Task<User> CreateCustomerAsync(CreateUser model);
+    Task<User> CreateInternalUserAsync(CreateUser model);
 }
 
