@@ -29,9 +29,6 @@ public class UserService : IUserService
 
         await EnsureRoleExistsAsync(InternalUser);
         
-        if(await GetUserByUsernameAsync(model.UserName) is not null)
-            throw new UserException("User already exists!");
-
         IdentityResult result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
         {
@@ -50,9 +47,6 @@ public class UserService : IUserService
 
         await EnsureRoleExistsAsync(CustomerRole);
         
-        if(await GetUserByUsernameAsync(model.UserName) is not null)
-            throw new UserException("User already exists!");
-
         IdentityResult result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
         {
