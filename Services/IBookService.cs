@@ -5,11 +5,11 @@ namespace Library.Services;
 
 public interface IBookService
 {
-    Task<List<Book>> GetBookByName(string name);
-    Task<List<Book>> GetBooks();
-    Task<Book> CreateBook(CreateBook category);
-    Task<bool> UpdateBook(int id, UpdateBook category);
-    Task<bool> UpdateBookAuthors(int id, UpdateBookAuthors bookAuthors);
-    Task<bool> DeleteBook(int id);
-    Task<Book?> GetBookByIdNoTracking(int id);
+    Task<List<Book>> GetBookByNameAsync(string name);
+    Task<List<Book>> GetBooksAsync();
+    Task<Book> CreateBookAsync(CreateBook category);
+    Task<bool> UpdateBookAsync(int id, UpdateBook category);
+    Task<bool> UpdateBookAuthorsAsync(int id, UpdateBookAuthors bookAuthors);
+    Task<bool> DeleteBookAsync(int id);
+    Task<Book?> GetBookByIdAsync(int id);
 }

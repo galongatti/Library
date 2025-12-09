@@ -7,51 +7,49 @@ namespace Library.Services;
 
 public class AuthorService(IAuthorRepository repository) : IAuthorService
 {
-    public Task<List<Author>> GetAuthorByName(string name)
+    public Task<List<Author>> GetAuthorByNameAsync(string name)
     {
-        return repository.GetAuthorByName(name);
+        return repository.GetAuthorByNameAsync(name);
     }
 
-    public async Task<List<Author>> GetAuthors()
+    public async Task<List<Author>> GetAuthorsAsync()
     {
-        return await repository.GetAuthors();
+        return await repository.GetAuthorsAsync();
     }
 
-    public async Task<Author> CreateAuthor(CreateAuthor createAuthor)
+    public async Task<Author> CreateAuthorAsync(CreateAuthor createAuthor)
     {
         Author author = createAuthor.ToEntity();
-        return await repository.CreateAuthor(author);      
+        return await repository.CreateAuthorAsync(author);      
     }
 
-    public async Task<bool> UpdateAuthor(int id, UpdateAuthor author)
+    public async Task<bool> UpdateAuthorAsync(int id, UpdateAuthor author)
     {
-
-        Author? authorExist = await repository.GetAuthorByIdTracking(id);
+        Author? authorExist = await repository.GetAuthorByIdAsync(id);
         
         if( authorExist is null)
             throw new AuthorException("Author not found");
         
         authorExist.Update(author.Name);
         
-        return await repository.UpdateAuthor(authorExist);
+        return await repository.UpdateAuthorAsync(authorExist);
     }
 
-    public async Task<bool> DeleteAuthor(int id)
+    public async Task<bool> DeleteAuthorAsync(int id)
     {
-        Author? authorExist = await repository.GetAuthorByIdTracking(id);
+        Author? authorExist = await repository.GetAuthorByIdAsync(id);
         
         if( authorExist is null)
             throw new AuthorException("Author not found");
         
         authorExist.SetAsDeleted();
         
-        return await repository.UpdateAuthor(authorExist);
+        return await repository.UpdateAuthorAsync(authorExist);
     }
 
-    public async Task<Author?> GetAuthorByIdNoTracking(int id)
+    public async Task<Author?> GetAuthorByIdAsync(int id)
     {
-        
-        Author? author = await repository.GetAuthorByIdNoTracking(id);
+        Author? author = await repository.GetAuthorByIdAsync(id);
         
         return author ?? throw new AuthorException("Author not found");
     }

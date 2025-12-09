@@ -41,6 +41,21 @@ public class ApiExceptionHandler : IExceptionHandler
                 "Author Error",
                 authorException.Message
             ),
+            BookException bookException => (
+                StatusCodes.Status400BadRequest,
+                "Book Error",
+                bookException.Message
+            ),
+            CategoryException categoryException => (
+                StatusCodes.Status400BadRequest,
+                "Category Error",
+                categoryException.Message
+            ),
+            UserException userException => (
+                StatusCodes.Status400BadRequest,
+                "User Error",
+                userException.Message
+            ),
             _ => (
                 StatusCodes.Status500InternalServerError,
                 "Internal Server Error",

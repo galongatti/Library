@@ -4,10 +4,9 @@ namespace Library.Repository;
 
 public interface IBookRepository
 {
-    Task<List<Book>> GetBookByName(string name);
-    Task<List<Book>> GetBooks();
-    Task<Book> CreateBook(Book category);
-    Task<bool> UpdateBook(Book category);
-    Task<Book?> GetBookByIdTracking(int id);
-    Task<Book?> GetBookByIdNoTracking(int id);
+    Task<List<Book>> GetBookByNameAsync(string name);
+    Task<List<Book>> GetBooksAsync();
+    Task<Book> CreateBookAsync(Book category);
+    Task<bool> UpdateBookAsync(Book category);
+    Task<Book?> GetBookByIdAsync(int id);
 }

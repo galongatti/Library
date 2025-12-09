@@ -14,15 +14,17 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateAuthor model)
     {
-        Author author = await authorService.CreateAuthor(model);
-        return Ok(author);
+        Author author = await authorService.CreateAuthorAsync(model);
+        ReadAuthor readAuthor = ReadAuthor.FromAuthor(author);
+        
+        return CreatedAtAction(nameof(Get), new { id = readAuthor.Id }, readAuthor);
     }
 
 
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        List<Author> authors = await authorService.GetAuthors();
+        List<Author> authors = await authorService.GetAuthorsAsync();
         List<ReadAuthor> readAuthors = ReadAuthor.FromAuthors(authors);
         return Ok(readAuthors);
     }
@@ -31,7 +33,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateAuthor model)
     {
-        bool ok = await authorService.UpdateAuthor(id, model);
+        bool ok = await authorService.UpdateAuthorAsync(id, model);
         
         if(ok) return Ok();
         
@@ -41,7 +43,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        bool ok = await authorService.DeleteAuthor(id);
+        bool ok = await authorService.DeleteAuthorAsync(id);
         
         if(ok) return Ok();
         
@@ -51,7 +53,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get([FromRoute] int id)
     {
-        Author? author = await authorService.GetAuthorByIdNoTracking(id);
+        Author? author = await authorService.GetAuthorByIdAsync(id);
 
         if (author is null) return BadRequest();
         ReadAuthor readAuthor = ReadAuthor.FromAuthor(author);

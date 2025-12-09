@@ -5,10 +5,10 @@ namespace Library.Services;
 
 public interface IAuthorService
 {
-    Task<List<Author>> GetAuthorByName(string name);
-    Task<List<Author>> GetAuthors();
-    Task<Author> CreateAuthor(CreateAuthor author);
-    Task<bool> UpdateAuthor(int id, UpdateAuthor author);
-    Task<bool> DeleteAuthor(int id);
-    Task<Author?> GetAuthorByIdNoTracking(int id);
+    Task<List<Author>> GetAuthorByNameAsync(string name);
+    Task<List<Author>> GetAuthorsAsync();
+    Task<Author> CreateAuthorAsync(CreateAuthor author);
+    Task<bool> UpdateAuthorAsync(int id, UpdateAuthor author);
+    Task<bool> DeleteAuthorAsync(int id);
+    Task<Author?> GetAuthorByIdAsync(int id);
 }

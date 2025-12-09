@@ -7,7 +7,7 @@ namespace Library.Repository;
 
 public class AuthorRepository(AppDbContext dbContext) : IAuthorRepository
 {
-    public async Task<List<Author>> GetAuthorByName(string name)
+    public async Task<List<Author>> GetAuthorByNameAsync(string name)
     {
         string cleanName = Escape.EscapeLike(name);
         
@@ -18,35 +18,32 @@ public class AuthorRepository(AppDbContext dbContext) : IAuthorRepository
         return res;
     }
 
-    public async Task<List<Author>> GetAuthors()
+    public async Task<List<Author>> GetAuthorsAsync()
     {
         return await dbContext.Authors.AsNoTracking().ToListAsync();
     }
 
-    public async Task<Author> CreateAuthor(Author author)
+    public async Task<Author> CreateAuthorAsync(Author author)
     {
         dbContext.Authors.Add(author);
         await dbContext.SaveChangesAsync();
         return author;
     }
     
-    public async Task<Author?> GetAuthorByIdTracking(int id)
-    {
-        return await dbContext.Authors.FindAsync(id);
-    }
 
-    public async Task<bool> UpdateAuthor(Author author)
+    public async Task<bool> UpdateAuthorAsync(Author author)
     {
+        dbContext.Authors.Update(author);
         await dbContext.SaveChangesAsync();
         return true;
     }
     
-    public async Task<Author?> GetAuthorByIdNoTracking(int id)
+    public async Task<Author?> GetAuthorByIdAsync(int id)
     {
-        return await dbContext.Authors.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+        return await dbContext.Authors.AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
     }
 
-    public async Task<List<Author>> GetAuthorsByIds(List<int> ids)
+    public async Task<List<Author>> GetAuthorsByIdsAsync(List<int> ids)
     {
         return await dbContext.Authors.AsNoTracking()
             .Where(a => ids.Contains(a.Id))
