@@ -9,8 +9,8 @@ namespace Library.Controllers;
 [Route("api/users")]
 public class UserController(IUserService userService) : ControllerBase
 {
-    [HttpPost("employers")]
-    public async Task<IActionResult> CreateEmployer([FromBody] CreateUser model)
+    [HttpPost("internal-users")]
+    public async Task<IActionResult> CreateInternalUser([FromBody] CreateUser model)
     {
         User user = await userService.CreateInternalUserAsync(model);
         
