@@ -3,17 +3,17 @@ namespace Library.Model.Entities;
 public class Lend : BaseEntity
 {
     public string InternalUserId { get; private set; }
-    public string CostumerUserId { get; private set; }
+    public string CustumerUserId { get; private set; }
     public User InternalUser { get; private set; } 
     public User Costumer { get; private set; }
     public DateTime LendDate { get; private set; }
     public DateTime? ExpectedReturnDate { get; private set; }
     public LendStatus Status { get; private set; } = LendStatus.Pending;
 
-    public Lend(string internalUserId, string costumerUserId,DateTime lendDate)
+    public Lend(string internalUserId, string custumerUserId,DateTime lendDate)
     {
         InternalUserId = internalUserId;
-        CostumerUserId = costumerUserId;
+        CustumerUserId = custumerUserId;
         LendDate = lendDate;
     }
     

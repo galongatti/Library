@@ -30,7 +30,7 @@ public class UserService : IUserService
         bool checkRoleExistsAsync = await CheckRoleExistsAsync(InternalUser);
         
         if(!checkRoleExistsAsync)
-            throw new UserException("InternalUser role doesn't exist: " + CustomerRole);
+            throw new UserException("InternalUser role doesn't exist: " + InternalUser);
         
         IdentityResult result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)

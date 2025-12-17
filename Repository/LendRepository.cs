@@ -27,7 +27,7 @@ public class LendRepository(AppDbContext dbContext) : ILendRepository
     public async Task<List<Lend>> GetLendsByCustomerIdAsync(string customerUserId)
     {
         return await dbContext.Lends
-            .Where(l => l.CostumerUserId == customerUserId)
+            .Where(l => l.CustumerUserId == customerUserId)
             .Include(l => l.InternalUser)
             .Include(l => l.Costumer)
             .AsNoTracking()

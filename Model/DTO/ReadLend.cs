@@ -6,7 +6,7 @@ public class ReadLend
 {
     public int Id { get; set; }
     public string InternalUserId { get; set; }
-    public string CostumerUserId { get; set; }
+    public string CustumerUserId { get; set; }
     public DateTime LendDate { get; set; }
     public DateTime? ExpectedReturnDate { get; set; }
     public LendStatus Status { get; set; }
@@ -15,7 +15,7 @@ public class ReadLend
     {
         Id = lend.Id,
         InternalUserId = lend.InternalUserId,
-        CostumerUserId = lend.CostumerUserId,
+        CustumerUserId = lend.CustumerUserId,
         LendDate = lend.LendDate,
         ExpectedReturnDate = lend.ExpectedReturnDate,
         Status = lend.Status
