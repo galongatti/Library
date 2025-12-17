@@ -11,8 +11,8 @@ namespace Library.Controllers;
 [Authorize(Roles = "InternalUser")]
 public class UserController(IUserService userService) : ControllerBase
 {
-    [HttpPost("employers")]
-    public async Task<IActionResult> CreateEmployer([FromBody] CreateUser model)
+    [HttpPost("internal-users")]
+    public async Task<IActionResult> CreateInternalUser([FromBody] CreateUser model)
     {
         User user = await userService.CreateInternalUserAsync(model);
         
