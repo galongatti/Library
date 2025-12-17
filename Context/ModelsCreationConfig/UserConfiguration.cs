@@ -6,9 +6,9 @@ namespace Library.Context.ModelsCreationConfig;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<User> userBuilder)
+    public void Configure(EntityTypeBuilder<User> builder)
     {
-        userBuilder.Property(a => a.Name).IsRequired().HasMaxLength(255);
-        userBuilder.Property(a => a.Document).IsRequired().HasMaxLength(255);
+        builder.Property(a => a.Name).IsRequired().HasMaxLength(255);
+        builder.Property(a => a.Document).IsRequired().HasMaxLength(255);
     }
 }

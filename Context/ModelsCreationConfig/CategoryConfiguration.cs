@@ -6,9 +6,10 @@ namespace Library.Context.ModelsCreationConfig;
 
 public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
-    public void Configure(EntityTypeBuilder<Category> categoryBuilder)
+    public void Configure(EntityTypeBuilder<Category> builder)
     {
-       categoryBuilder.HasKey(a => a.Id);
-       categoryBuilder.Property(a => a.Name).IsRequired().HasMaxLength(255);
+       builder.HasKey(a => a.Id);
+       builder.Property(a => a.Name).IsRequired().HasMaxLength(255);
+       builder.Property(a => a.CreatedAt).IsRequired();
     }
 }

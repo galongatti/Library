@@ -1,6 +1,7 @@
 using Library.Model.DTO;
 using Library.Model.Entities;
 using Library.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Controllers;
@@ -10,8 +11,8 @@ namespace Library.Controllers;
 [Route("api/authors")]
 public class AuthorController(IAuthorService authorService) : ControllerBase
 {
-    
     [HttpPost]
+    [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> Create(CreateAuthor model)
     {
         Author author = await authorService.CreateAuthorAsync(model);
@@ -22,6 +23,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
 
 
     [HttpGet]
+    [Authorize(Roles = "InternalUser,customer")]
     public async Task<IActionResult> Get()
     {
         List<Author> authors = await authorService.GetAuthorsAsync();
@@ -31,6 +33,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     
     
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateAuthor model)
     {
         bool ok = await authorService.UpdateAuthorAsync(id, model);
@@ -41,6 +44,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     }
     
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         bool ok = await authorService.DeleteAuthorAsync(id);
@@ -51,6 +55,7 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     }
     
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "InternalUser,customer")]
     public async Task<IActionResult> Get([FromRoute] int id)
     {
         Author? author = await authorService.GetAuthorByIdAsync(id);

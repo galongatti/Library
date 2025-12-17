@@ -10,5 +10,5 @@ public interface IUserService
     Task<List<User>> GetUsersAsync();
     Task<User> CreateCustomerAsync(CreateUser model);
     Task<User> CreateInternalUserAsync(CreateUser model);
+    Task<IList<string>> GetRolesAsync(User user);
 }
-

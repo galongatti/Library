@@ -39,8 +39,59 @@ public class BookRepository(AppDbContext dbContext) : IBookRepository
     
     public async Task<Book?> GetBookByIdAsync(int id)
     {
-        return await dbContext.Books.Include(c => c.Category).Include(a => a.Authors).AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
+        return await dbContext.Books.Include(c => c.Category).Include(a => a.Authors).Include(b => b.Copies).AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
     }
    
-}
+    // Copies related
+    public async Task<List<BookCopy>> GetCopiesByBookIdAsync(int bookId)
+    {
+        return await dbContext.BookCopies.Where(c => c.BookId == bookId).AsNoTracking().ToListAsync();
+    }
 
+    public async Task<BookCopy> AddCopyAsync(BookCopy copy)
+    {
+        dbContext.BookCopies.Add(copy);
+        await dbContext.SaveChangesAsync();
+        return copy;
+    }
+
+    public async Task<bool> RemoveCopyAsync(int copyId)
+    {
+        var copy = await dbContext.BookCopies.FindAsync(copyId);
+        if (copy is null) return false;
+        dbContext.BookCopies.Remove(copy);
+        await dbContext.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<int> CountAvailableCopiesAsync(int bookId)
+    {
+        return await dbContext.BookCopies.CountAsync(c => c.BookId == bookId && c.IsAvailable);
+    }
+
+    public async Task<BookCopy?> GetAvailableCopyAsync(int bookId)
+    {
+        return await dbContext.BookCopies.FirstOrDefaultAsync(c => c.BookId == bookId && c.IsAvailable);
+    }
+
+    public async Task<bool> MarkCopyAsLentAsync(int copyId)
+    {
+        var copy = await dbContext.BookCopies.FindAsync(copyId);
+        if (copy is null) return false;
+        copy.MarkAsLent();
+        dbContext.BookCopies.Update(copy);
+        await dbContext.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> MarkCopyAsReturnedAsync(int copyId)
+    {
+        var copy = await dbContext.BookCopies.FindAsync(copyId);
+        if (copy is null) return false;
+        copy.MarkAsReturned();
+        dbContext.BookCopies.Update(copy);
+        await dbContext.SaveChangesAsync();
+        return true;
+    }
+
+}

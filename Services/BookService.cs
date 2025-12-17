@@ -71,4 +71,45 @@ public class BookService(IBookRepository bookRepository, IAuthorRepository autho
         
         return author ?? throw new BookException("Book not found");
     }
+
+    // Copies
+    public async Task<List<BookCopy>> GetCopiesByBookIdAsync(int bookId)
+    {
+        return await bookRepository.GetCopiesByBookIdAsync(bookId);
+    }
+
+    public async Task<BookCopy> AddCopyAsync(int bookId, string barcode)
+    {
+        // ensure book exists
+        var book = await bookRepository.GetBookByIdAsync(bookId);
+        if (book is null) throw new BookException("Book not found");
+
+        var copy = new BookCopy(bookId, barcode);
+        return await bookRepository.AddCopyAsync(copy);
+    }
+
+    public async Task<bool> RemoveCopyAsync(int copyId)
+    {
+        return await bookRepository.RemoveCopyAsync(copyId);
+    }
+
+    public async Task<int> CountAvailableCopiesAsync(int bookId)
+    {
+        return await bookRepository.CountAvailableCopiesAsync(bookId);
+    }
+
+    public async Task<BookCopy?> GetAvailableCopyAsync(int bookId)
+    {
+        return await bookRepository.GetAvailableCopyAsync(bookId);
+    }
+
+    public async Task<bool> MarkCopyAsLentAsync(int copyId)
+    {
+        return await bookRepository.MarkCopyAsLentAsync(copyId);
+    }
+
+    public async Task<bool> MarkCopyAsReturnedAsync(int copyId)
+    {
+        return await bookRepository.MarkCopyAsReturnedAsync(copyId);
+    }
 }

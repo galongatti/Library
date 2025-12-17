@@ -6,11 +6,10 @@ namespace Library.Context.ModelsCreationConfig;
 
 public class AuthorConfiguration : IEntityTypeConfiguration<Author>
 {
-    public void Configure(EntityTypeBuilder<Author> authorBuilder)
+    public void Configure(EntityTypeBuilder<Author> builder)
     {
-       authorBuilder.HasKey(a => a.Id);
-       authorBuilder.Property(a => a.Name).IsRequired().HasMaxLength(255);
-       
-      
+       builder.HasKey(a => a.Id);
+       builder.Property(a => a.Name).IsRequired().HasMaxLength(255);
+       builder.Property(a => a.CreatedAt).IsRequired();
     }
 }

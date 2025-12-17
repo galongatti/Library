@@ -18,6 +18,12 @@ public static class RegisterServices
         services.AddScoped<IBookService, BookService>();
         
         services.AddScoped<IUserService, UserService>();
+
+        services.AddScoped<ILendRepository, LendRepository>();
+        services.AddScoped<ILendService, LendService>();
+
+        // Token service for JWT generation
+        services.AddScoped<ITokenService, TokenService>();
     }
     
 }
