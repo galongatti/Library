@@ -12,4 +12,15 @@ public interface IBookService
     Task<bool> UpdateBookAuthorsAsync(int id, UpdateBookAuthors bookAuthors);
     Task<bool> DeleteBookAsync(int id);
     Task<Book?> GetBookByIdAsync(int id);
+
+    // Copies
+    Task<List<BookCopy>> GetCopiesByBookIdAsync(int bookId);
+    Task<BookCopy> AddCopyAsync(int bookId, string barcode);
+    Task<bool> RemoveCopyAsync(int copyId);
+    Task<int> CountAvailableCopiesAsync(int bookId);
+
+    // Helpers for lending flow
+    Task<BookCopy?> GetAvailableCopyAsync(int bookId);
+    Task<bool> MarkCopyAsLentAsync(int copyId);
+    Task<bool> MarkCopyAsReturnedAsync(int copyId);
 }

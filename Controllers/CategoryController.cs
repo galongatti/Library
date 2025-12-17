@@ -1,6 +1,7 @@
 using Library.Model.DTO;
 using Library.Model.Entities;
 using Library.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,6 +12,7 @@ namespace Library.Controllers;
 public class CategoryController(ICategoryService categoryService) : ControllerBase
 {
     [HttpGet]
+    [Authorize(Roles = "InternalUser,customer")]
     public async Task<ActionResult<List<ReadCategory>>> GetAll()
     {
         List<Category> categories = await categoryService.GetCategoriesAsync();
@@ -18,6 +20,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     }
 
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "InternalUser,customer")]
     public async Task<ActionResult<ReadCategory>> GetById(int id)
     {
         Category? category = await categoryService.GetCategoryByIdAsync(id);
@@ -28,6 +31,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     }
 
     [HttpGet("search")]
+    [Authorize(Roles = "InternalUser,customer")]
     public async Task<ActionResult<List<ReadCategory>>> GetByName([FromQuery] string name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -40,6 +44,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     }
 
     [HttpPost]
+    [Authorize(Roles = "InternalUser")]
     public async Task<ActionResult<Category>> Create([FromBody] CreateCategory dto)
     {
         Category created = await categoryService.CreateCategoryAsync(dto);
@@ -49,6 +54,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "InternalUser")]
     public async Task<ActionResult> Update(int id, [FromBody] UpdateCategory dto)
     {
         bool ok = await categoryService.UpdateCategoryAsync(id, dto);
@@ -59,6 +65,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "InternalUser")]
     public async Task<ActionResult> Delete(int id)
     {
         bool ok = await categoryService.DeleteCategoryAsync(id);

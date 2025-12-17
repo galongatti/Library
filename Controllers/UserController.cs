@@ -1,12 +1,14 @@
 using Library.Model.DTO;
 using Library.Model.Entities;
 using Library.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize(Roles = "InternalUser")]
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpPost("internal-users")]

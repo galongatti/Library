@@ -3,6 +3,7 @@ using System;
 using Library.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251209232902_LendMigration")]
+    partial class LendMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,12 +30,12 @@ namespace Library.Migrations
                     b.Property<int>("AuthorsId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("BookId")
+                    b.Property<int>("BooksId")
                         .HasColumnType("integer");
 
-                    b.HasKey("AuthorsId", "BookId");
+                    b.HasKey("AuthorsId", "BooksId");
 
-                    b.HasIndex("BookId");
+                    b.HasIndex("BooksId");
 
                     b.ToTable("AuthorBook");
                 });
@@ -94,39 +97,7 @@ namespace Library.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Books");
-                });
-
-            modelBuilder.Entity("Library.Model.Entities.BookCopy", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Barcode")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("BookCopies");
+                    b.ToTable("Book");
                 });
 
             modelBuilder.Entity("Library.Model.Entities.Category", b =>
@@ -161,12 +132,12 @@ namespace Library.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CustumerUserId")
+                    b.Property<string>("CostumerUserId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("ExpectedReturnDate")
                         .HasColumnType("timestamp with time zone");
@@ -186,11 +157,11 @@ namespace Library.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustumerUserId");
+                    b.HasIndex("CostumerUserId");
 
                     b.HasIndex("InternalUserId");
 
-                    b.ToTable("Lends");
+                    b.ToTable("Lend");
                 });
 
             modelBuilder.Entity("Library.Model.Entities.User", b =>
@@ -423,7 +394,7 @@ namespace Library.Migrations
 
                     b.HasOne("Library.Model.Entities.Book", null)
                         .WithMany()
-                        .HasForeignKey("BookId")
+                        .HasForeignKey("BooksId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -439,22 +410,11 @@ namespace Library.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Library.Model.Entities.BookCopy", b =>
-                {
-                    b.HasOne("Library.Model.Entities.Book", "Book")
-                        .WithMany("Copies")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-                });
-
             modelBuilder.Entity("Library.Model.Entities.Lend", b =>
                 {
                     b.HasOne("Library.Model.Entities.User", "Costumer")
                         .WithMany("LendsAsCostumer")
-                        .HasForeignKey("CustumerUserId")
+                        .HasForeignKey("CostumerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -518,11 +478,6 @@ namespace Library.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Library.Model.Entities.Book", b =>
-                {
-                    b.Navigation("Copies");
                 });
 
             modelBuilder.Entity("Library.Model.Entities.Category", b =>

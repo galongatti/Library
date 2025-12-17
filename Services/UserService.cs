@@ -27,7 +27,10 @@ public class UserService : IUserService
     {
         User user = model.ToEntity();
 
-        await EnsureRoleExistsAsync(InternalUser);
+        bool checkRoleExistsAsync = await CheckRoleExistsAsync(InternalUser);
+        
+        if(!checkRoleExistsAsync)
+            throw new UserException("InternalUser role doesn't exist: " + InternalUser);
         
         IdentityResult result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
@@ -45,7 +48,10 @@ public class UserService : IUserService
     {
         User user = model.ToEntity();
 
-        await EnsureRoleExistsAsync(CustomerRole);
+        bool checkRoleExistsAsync = await CheckRoleExistsAsync(CustomerRole);
+        
+        if(!checkRoleExistsAsync)
+            throw new UserException("Customer role doesn't exist: " + CustomerRole);
         
         IdentityResult result = await _userManager.CreateAsync(user, model.Password);
         if (!result.Succeeded)
@@ -64,8 +70,7 @@ public class UserService : IUserService
     public Task<User?> GetUserByUsernameAsync(string username) =>
         _userManager.Users.SingleOrDefaultAsync(u => u.UserName == username);
 
-    private async Task EnsureRoleExistsAsync(string roleName)
-    {
-        await _roleManager.RoleExistsAsync(roleName);
-    }
+    public Task<IList<string>> GetRolesAsync(User user) => _userManager.GetRolesAsync(user);
+    private async Task<bool> CheckRoleExistsAsync(string roleName) => await _roleManager.RoleExistsAsync(roleName);
+   
 }

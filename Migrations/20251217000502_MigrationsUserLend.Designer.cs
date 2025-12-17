@@ -3,6 +3,7 @@ using System;
 using Library.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251217000502_MigrationsUserLend")]
+    partial class MigrationsUserLend
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,12 +164,12 @@ namespace Library.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CustumerUserId")
+                    b.Property<string>("CostumerUserId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("ExpectedReturnDate")
                         .HasColumnType("timestamp with time zone");
@@ -186,7 +189,7 @@ namespace Library.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustumerUserId");
+                    b.HasIndex("CostumerUserId");
 
                     b.HasIndex("InternalUserId");
 
@@ -454,7 +457,7 @@ namespace Library.Migrations
                 {
                     b.HasOne("Library.Model.Entities.User", "Costumer")
                         .WithMany("LendsAsCostumer")
-                        .HasForeignKey("CustumerUserId")
+                        .HasForeignKey("CostumerUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

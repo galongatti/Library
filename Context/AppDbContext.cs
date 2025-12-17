@@ -11,6 +11,8 @@ public class AppDbContext : IdentityDbContext<User>
     public DbSet<Author> Authors { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Book> Books { get; set; }
+    public DbSet<BookCopy> BookCopies { get; set; }
+    public DbSet<Lend> Lends { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -24,8 +26,10 @@ public class AppDbContext : IdentityDbContext<User>
         
         builder.ApplyConfiguration(new CategoryConfiguration());
         builder.ApplyConfiguration(new BookConfiguration());
+        builder.ApplyConfiguration(new BookCopyConfiguration());
         builder.ApplyConfiguration(new AuthorConfiguration());
         builder.ApplyConfiguration(new UserConfiguration());
+        builder.ApplyConfiguration(new LendConfiguration());
         
     }
 }
