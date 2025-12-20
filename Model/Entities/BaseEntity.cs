@@ -12,7 +12,7 @@ public abstract class BaseEntity
         IsDeleted = false;
     }
 
-    public void SetAsDeleted()
+    public virtual void SetAsDeleted()
     {
         IsDeleted = true;
     }

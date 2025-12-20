@@ -67,7 +67,7 @@ public class BookService(IBookRepository bookRepository, IAuthorRepository autho
 
     public async Task<Book?> GetBookByIdAsync(int id)
     {
-        Book? author = await bookRepository.GetBookByIdAsync(id);
+        Book? author = await bookRepository.GetBookByIdWithCategoryAuthorsCopiesAsync(id);
         
         return author ?? throw new BookException("Book not found");
     }
@@ -81,7 +81,7 @@ public class BookService(IBookRepository bookRepository, IAuthorRepository autho
     public async Task<BookCopy> AddCopyAsync(int bookId, string barcode)
     {
         // ensure book exists
-        var book = await bookRepository.GetBookByIdAsync(bookId);
+        var book = await bookRepository.GetBookByIdWithCategoryAuthorsCopiesAsync(bookId);
         if (book is null) throw new BookException("Book not found");
 
         var copy = new BookCopy(bookId, barcode);
@@ -90,7 +90,13 @@ public class BookService(IBookRepository bookRepository, IAuthorRepository autho
 
     public async Task<bool> RemoveCopyAsync(int copyId)
     {
-        return await bookRepository.RemoveCopyAsync(copyId);
+        BookCopy? copy = await bookRepository.GetCopyByIdAsync(copyId);
+        
+        if(copy is null) throw new BookException("Copie not found");
+        
+        copy.SetAsDeleted();
+        
+        return await bookRepository.UpdateCopyAsync(copy);
     }
 
     public async Task<int> CountAvailableCopiesAsync(int bookId)
@@ -105,11 +111,21 @@ public class BookService(IBookRepository bookRepository, IAuthorRepository autho
 
     public async Task<bool> MarkCopyAsLentAsync(int copyId)
     {
-        return await bookRepository.MarkCopyAsLentAsync(copyId);
+        BookCopy? copy = await bookRepository.GetCopyByIdAsync(copyId);
+        
+        if(copy is null) throw new BookException("Copy not found");
+        
+        copy.MarkAsLent();
+        
+        return await bookRepository.UpdateCopyAsync(copy);
     }
 
     public async Task<bool> MarkCopyAsReturnedAsync(int copyId)
     {
-        return await bookRepository.MarkCopyAsReturnedAsync(copyId);
+        BookCopy? copy = await bookRepository.GetCopyByIdAsync(copyId);
+        if(copy is null) throw new BookException("Copy not found");
+        
+        copy.MarkAsReturned();
+        return await bookRepository.UpdateCopyAsync(copy);
     }
 }

@@ -44,6 +44,28 @@ public class LendController(ILendService lendService) : ControllerBase
         return BadRequest();
     }
 
+    [HttpGet("{id:int}/items")]
+    public async Task<IActionResult> GetItems([FromRoute] int id)
+    {
+        var items = await lendService.GetItemsByLendIdAsync(id);
+        return Ok(items);
+    }
+
+    [HttpPost("{id:int}/items")]
+    public async Task<IActionResult> AddItem([FromRoute] int id, [FromBody] AddLendItemModel model)
+    {
+        LendItem item = await lendService.AddItemAsync(id, model);
+        return CreatedAtAction(nameof(GetItems), new { id }, item);
+    }
+
+    [HttpDelete("{lendId:int}/items/{itemId:int}")]
+    public async Task<IActionResult> RemoveItem([FromRoute] int lendId, [FromRoute] int itemId)
+    {
+        bool ok = await lendService.RemoveItemAsync(lendId, itemId);
+        if (ok) return Ok();
+        return BadRequest();
+    }
+
     [HttpPut("{id:int}/return")]
     public async Task<IActionResult> Return([FromRoute] int id)
     {

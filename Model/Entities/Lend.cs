@@ -10,6 +10,9 @@ public class Lend : BaseEntity
     public DateTime? ExpectedReturnDate { get; private set; }
     public LendStatus Status { get; private set; } = LendStatus.Pending;
 
+    // New: items of the lend
+    public List<LendItem> Items { get; private set; } = new();
+
     public Lend(string internalUserId, string custumerUserId,DateTime lendDate)
     {
         InternalUserId = internalUserId;
@@ -36,8 +39,18 @@ public class Lend : BaseEntity
     {
         return LendDate.AddDays(quantityOfDays);
     }
-    
-    
-    
- 
+
+    // Items helpers
+    public void AddItem(LendItem item)
+    {
+        Items.Add(item);
+    }
+
+    public bool RemoveItem(int itemId)
+    {
+        var item = Items.SingleOrDefault(i => i.Id == itemId);
+        if (item is null) return false;
+        Items.Remove(item);
+        return true;
+    }
 }
