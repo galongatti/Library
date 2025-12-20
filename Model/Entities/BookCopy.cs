@@ -18,5 +18,11 @@ public class BookCopy : BaseEntity
 
     public void MarkAsLent() => IsAvailable = false;
     public void MarkAsReturned() => IsAvailable = true;
+
+    public override void SetAsDeleted()
+    {
+        IsAvailable = false;
+        base.SetAsDeleted();
+    }
 }
 

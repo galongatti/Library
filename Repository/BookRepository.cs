@@ -2,6 +2,7 @@ using Library.Context;
 using Library.Model.Entities;
 using Library.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Library.Repository;
 
@@ -10,7 +11,7 @@ public class BookRepository(AppDbContext dbContext) : IBookRepository
     public async Task<List<Book>> GetBookByNameAsync(string name)
     {
         string cleanName = Escape.EscapeLike(name);
-        
+
         List<Book> res = await (from author in dbContext.Books.AsNoTracking()
             where EF.Functions.Like(author.Title, cleanName)
             select author).ToListAsync();
@@ -20,7 +21,10 @@ public class BookRepository(AppDbContext dbContext) : IBookRepository
 
     public async Task<List<Book>> GetBooksAsync()
     {
-        return await dbContext.Books.Include(c => c.Category).Include(a => a.Authors).AsNoTracking().ToListAsync();
+        return await dbContext.Books.
+            Include(c => c.Category).
+            Include(a => a.Authors).
+            AsNoTracking().ToListAsync();
     }
 
     public async Task<Book> CreateBookAsync(Book author)
@@ -29,20 +33,29 @@ public class BookRepository(AppDbContext dbContext) : IBookRepository
         await dbContext.SaveChangesAsync();
         return author;
     }
-    
-    public async Task<bool> UpdateBookAsync(Book author)
+
+    public async Task<bool> UpdateBookAsync(Book book)
     {
-        dbContext.Books.Update(author);
+        dbContext.Books.Update(book);
         await dbContext.SaveChangesAsync();
         return true;
     }
-    
+
+    public async Task<Book?> GetBookByIdWithCategoryAuthorsCopiesAsync(int id)
+    {
+        return await dbContext.Books.
+            Include(c => c.Category).
+            Include(a => a.Authors).
+            Include(c => c.Copies)
+            .AsNoTracking()
+            .SingleOrDefaultAsync(a => a.Id == id);
+    }
+
     public async Task<Book?> GetBookByIdAsync(int id)
     {
-        return await dbContext.Books.Include(c => c.Category).Include(a => a.Authors).Include(b => b.Copies).AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
+        return await dbContext.Books.AsNoTracking().SingleOrDefaultAsync(a => a.Id == id);
     }
-   
-    // Copies related
+
     public async Task<List<BookCopy>> GetCopiesByBookIdAsync(int bookId)
     {
         return await dbContext.BookCopies.Where(c => c.BookId == bookId).AsNoTracking().ToListAsync();
@@ -55,43 +68,25 @@ public class BookRepository(AppDbContext dbContext) : IBookRepository
         return copy;
     }
 
-    public async Task<bool> RemoveCopyAsync(int copyId)
+    public async Task<bool> UpdateCopyAsync(BookCopy bookCopy)
     {
-        var copy = await dbContext.BookCopies.FindAsync(copyId);
-        if (copy is null) return false;
-        dbContext.BookCopies.Remove(copy);
+        dbContext.BookCopies.Update(bookCopy);
         await dbContext.SaveChangesAsync();
         return true;
     }
-
+    
     public async Task<int> CountAvailableCopiesAsync(int bookId)
     {
         return await dbContext.BookCopies.CountAsync(c => c.BookId == bookId && c.IsAvailable);
     }
 
+    public async Task<BookCopy?> GetCopyByIdAsync(int copyId)
+    {
+        return await dbContext.BookCopies.AsNoTracking().SingleOrDefaultAsync(c => c.Id == copyId);
+    }
+
     public async Task<BookCopy?> GetAvailableCopyAsync(int bookId)
     {
-        return await dbContext.BookCopies.FirstOrDefaultAsync(c => c.BookId == bookId && c.IsAvailable);
+        return await dbContext.BookCopies.AsNoTracking().FirstOrDefaultAsync(c => c.Id == bookId && c.IsAvailable);
     }
-
-    public async Task<bool> MarkCopyAsLentAsync(int copyId)
-    {
-        var copy = await dbContext.BookCopies.FindAsync(copyId);
-        if (copy is null) return false;
-        copy.MarkAsLent();
-        dbContext.BookCopies.Update(copy);
-        await dbContext.SaveChangesAsync();
-        return true;
-    }
-
-    public async Task<bool> MarkCopyAsReturnedAsync(int copyId)
-    {
-        var copy = await dbContext.BookCopies.FindAsync(copyId);
-        if (copy is null) return false;
-        copy.MarkAsReturned();
-        dbContext.BookCopies.Update(copy);
-        await dbContext.SaveChangesAsync();
-        return true;
-    }
-
 }

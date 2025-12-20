@@ -17,7 +17,6 @@ public class UserController(IUserService userService) : ControllerBase
         User user = await userService.CreateInternalUserAsync(model);
         
         ReadUser readUser = ReadUser.FromUser(user);
-        
         return CreatedAtAction(nameof(GetByUserName), new { username = user.UserName }, readUser);
     }
 

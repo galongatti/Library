@@ -11,4 +11,9 @@ public interface ILendService
     Task<bool> ApproveLendAsync(int lendId, DateTime expectedReturnDate);
     Task<bool> ReturnLendAsync(int lendId);
     Task<bool> CancelLendAsync(int lendId);
+
+    // Items
+    Task<List<LendItem>> GetItemsByLendIdAsync(int lendId);
+    Task<LendItem> AddItemAsync(int lendId, AddLendItemModel bookCopyId);
+    Task<bool> RemoveItemAsync(int lendId, int itemId);
 }
