@@ -6,7 +6,7 @@ using Library.Repository;
 
 namespace Library.Services;
 
-public class LendService(ILendRepository repository) : ILendService
+public class LendService(ILendRepository repository, IBookService bookService) : ILendService
 {
     public async Task<List<Lend>> GetLendsAsync()
     {
@@ -53,5 +53,40 @@ public class LendService(ILendRepository repository) : ILendService
 
         lend.CancelLend();
         return await repository.UpdateLendAsync(lend);
+    }
+
+    public async Task<List<LendItem>> GetItemsByLendIdAsync(int lendId)
+    {
+        return await repository.GetItemsByLendIdAsync(lendId);
+    }
+
+    public async Task<LendItem> AddItemAsync(int lendId, AddLendItemModel bookCopyId)
+    {
+        Lend? lend = await repository.GetLendByIdAsync(lendId);
+        if (lend is null) throw new LendException("Lend not found");
+        if (lend.Status != LendStatus.Pending) throw new LendException("Can only add items to a pending lend");
+
+        bool marked = await bookService.MarkCopyAsLentAsync(bookCopyId.BookCopyId);
+        if (!marked) throw new LendException("Book copy not available");
+
+        LendItem item = new(lendId, bookCopyId.BookCopyId);
+        return await repository.AddItemAsync(item);
+    }
+
+    public async Task<bool> RemoveItemAsync(int lendId, int itemId)
+    {
+        Lend? lend = await repository.GetLendByIdAsync(lendId);
+        
+        if(lend is null) throw new LendException("Lend not found");
+        
+        LendItem? item = lend.Items.SingleOrDefault(i => i.Id == itemId);
+
+        if (item is null) throw new LendException("Item not found");
+
+        bool removed = await repository.RemoveItemAsync(itemId);
+        if (!removed) return false;
+
+        await bookService.MarkCopyAsReturnedAsync(item.BookCopyId);
+        return true;
     }
 }

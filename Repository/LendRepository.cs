@@ -11,6 +11,7 @@ public class LendRepository(AppDbContext dbContext) : ILendRepository
         return await dbContext.Lends
             .Include(l => l.InternalUser)
             .Include(l => l.Costumer)
+            .Include(l => l.Items)
             .AsNoTracking()
             .ToListAsync();
     }
@@ -20,6 +21,7 @@ public class LendRepository(AppDbContext dbContext) : ILendRepository
         return await dbContext.Lends
             .Include(l => l.InternalUser)
             .Include(l => l.Costumer)
+            .Include(l => l.Items)
             .AsNoTracking()
             .SingleOrDefaultAsync(l => l.Id == id);
     }
@@ -30,6 +32,7 @@ public class LendRepository(AppDbContext dbContext) : ILendRepository
             .Where(l => l.CustumerUserId == customerUserId)
             .Include(l => l.InternalUser)
             .Include(l => l.Costumer)
+            .Include(l => l.Items)
             .AsNoTracking()
             .ToListAsync();
     }
@@ -47,5 +50,26 @@ public class LendRepository(AppDbContext dbContext) : ILendRepository
         await dbContext.SaveChangesAsync();
         return true;
     }
-}
 
+    // Items
+    public async Task<List<LendItem>> GetItemsByLendIdAsync(int lendId)
+    {
+        return await dbContext.LendItems.Where(i => i.LendId == lendId).Include(i => i.BookCopy).AsNoTracking().ToListAsync();
+    }
+
+    public async Task<LendItem> AddItemAsync(LendItem item)
+    {
+        dbContext.LendItems.Add(item);
+        await dbContext.SaveChangesAsync();
+        return item;
+    }
+
+    public async Task<bool> RemoveItemAsync(int itemId)
+    {
+        LendItem? item = await dbContext.LendItems.FindAsync(itemId);
+        if (item is null) return false;
+        dbContext.LendItems.Remove(item);
+        await dbContext.SaveChangesAsync();
+        return true;
+    }
+}

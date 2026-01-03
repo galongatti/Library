@@ -9,15 +9,25 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DbConnection");
+string? connectionString = builder.Configuration.GetConnectionString("DbConnection");
 
-builder.Services.AddDbContext<AppDbContext>(c => c.UseNpgsql(connectionString));
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseNpgsql(connectionString).EnableSensitiveDataLogging().EnableDetailedErrors();
+});
 
-// Configura Identity para usar o AppDbContext e expor UserManager/RoleManager
 builder.Services
-    .AddIdentity<User, IdentityRole>()
+    .AddIdentity<User, IdentityRole>(i =>
+    {
+        i.Password.RequireDigit = true;
+        i.Password.RequiredLength = 6;
+        i.Password.RequireNonAlphanumeric = true;
+        i.Password.RequireUppercase = true;
+        i.Password.RequireLowercase = true;
+        i.User.RequireUniqueEmail = true;
+    })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
