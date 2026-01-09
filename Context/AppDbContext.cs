@@ -47,6 +47,8 @@ public class AppDbContext : IdentityDbContext<User>
         base.OnModelCreating(builder);
         
         builder.ApplyConfiguration(new RolesSeed());
+        builder.ApplyConfiguration(new AdminSeed());
+        builder.ApplyConfiguration(new UserRoleSeed());
         
         builder.ApplyConfiguration(new CategoryConfiguration());
         builder.ApplyConfiguration(new BookConfiguration());

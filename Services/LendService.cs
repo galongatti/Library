@@ -62,7 +62,7 @@ public class LendService(ILendRepository repository, IBookService bookService) :
 
     public async Task<LendItem> AddItemAsync(int lendId, AddLendItemModel bookCopyId)
     {
-        Lend? lend = await repository.GetLendByIdAsync(lendId);
+        Lend? lend = await repository.GetLendByIdAsync(lendId); 
         if (lend is null) throw new LendException("Lend not found");
         if (lend.Status != LendStatus.Pending) throw new LendException("Can only add items to a pending lend");
 
@@ -78,6 +78,7 @@ public class LendService(ILendRepository repository, IBookService bookService) :
         Lend? lend = await repository.GetLendByIdAsync(lendId);
         
         if(lend is null) throw new LendException("Lend not found");
+        if(lend.Status != LendStatus.Pending) throw new LendException("Can only remove items to a pending lend");
         
         LendItem? item = lend.Items.SingleOrDefault(i => i.Id == itemId);
 
