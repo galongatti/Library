@@ -114,6 +114,7 @@ public class BookService(IBookRepository bookRepository, IAuthorRepository autho
         BookCopy? copy = await bookRepository.GetCopyByIdAsync(copyId);
         
         if(copy is null) throw new BookException("Copy not found");
+        if(copy.IsAvailable == false) throw new BookException("Copy is not available");
         
         copy.MarkAsLent();
         

@@ -47,8 +47,9 @@ public class LendController(ILendService lendService) : ControllerBase
     [HttpGet("{id:int}/items")]
     public async Task<IActionResult> GetItems([FromRoute] int id)
     {
-        var items = await lendService.GetItemsByLendIdAsync(id);
-        return Ok(items);
+        List<LendItem> items = await lendService.GetItemsByLendIdAsync(id);
+        List<ReadLendItem> readLendItems = ReadLendItem.FromLendsItens(items);
+        return Ok(readLendItems);
     }
 
     [HttpPost("{id:int}/items")]

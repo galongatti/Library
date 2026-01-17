@@ -54,7 +54,12 @@ public class LendRepository(AppDbContext dbContext) : ILendRepository
     // Items
     public async Task<List<LendItem>> GetItemsByLendIdAsync(int lendId)
     {
-        return await dbContext.LendItems.Where(i => i.LendId == lendId).Include(i => i.BookCopy).AsNoTracking().ToListAsync();
+        return await dbContext.LendItems.Where(i => i.LendId == lendId).
+            Include(i => i.BookCopy).
+            Include(x => x.BookCopy.Book).
+            Include(i => i.BookCopy.Book.Category).
+            Include(i => i.BookCopy.Book.Authors).
+            AsNoTracking().ToListAsync();
     }
 
     public async Task<LendItem> AddItemAsync(LendItem item)

@@ -4,8 +4,6 @@ public class LendItem : BaseEntity
 {
     public int LendId { get; private set; }
     public int BookCopyId { get; private set; }
-
-    // Navigation
     public Lend Lend { get; private set; }
     public BookCopy BookCopy { get; private set; }
 
