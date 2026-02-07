@@ -5,10 +5,12 @@ public class RequestTrackingId(RequestDelegate _next)
 
     public async Task InvokeAsync(HttpContext context)
     {
-        Guid requestId = Guid.NewGuid();
+        String requestId = Guid.NewGuid().ToString();
         
-        context.Request.Headers["x-request-id"] = requestId.ToString();
-        
+        if(context.Request.Headers["x-request-id"].Count == 0)
+        {
+            context.Request.Headers["x-request-id"] = requestId;
+        }
         await _next(context);
         
     }

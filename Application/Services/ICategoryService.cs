@@ -10,5 +10,5 @@ public interface ICategoryService
     Task<Category> CreateCategoryAsync(CreateCategory category);
     Task<bool> UpdateCategoryAsync(int id, UpdateCategory category);
     Task<bool> DeleteCategoryAsync(int id);
-    Task<Category?> GetCategoryByIdAsync(int id);
+    Task<Category> GetCategoryByIdAsync(int id);
 }

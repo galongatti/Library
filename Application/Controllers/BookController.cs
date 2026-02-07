@@ -35,22 +35,17 @@ public class BookController(IBookService bookService) : ControllerBase
     [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBook model)
     {
-        bool ok = await bookService.UpdateBookAsync(id, model);
+        _ = await bookService.UpdateBookAsync(id, model);
+        return Ok();
         
-        if(ok) return Ok();
-        
-        return BadRequest();
     }
     
     [HttpPut("{id:int}/authors")]
     [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> UpdateBookAuthors([FromRoute] int id, [FromBody] UpdateBookAuthors model)
     {
-        bool ok = await bookService.UpdateBookAuthorsAsync(id, model);
-        
-        if(ok) return Ok();
-        
-        return BadRequest();
+        _ = await bookService.UpdateBookAuthorsAsync(id, model);
+        return Ok();
     }
 
 
@@ -67,9 +62,8 @@ public class BookController(IBookService bookService) : ControllerBase
     [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> RemoveCopy([FromRoute] int bookId, [FromRoute] int copyId)
     {
-        bool ok = await bookService.RemoveCopyAsync(copyId);
-        if (ok) return Ok();
-        return BadRequest();
+        _ = await bookService.RemoveCopyAsync(copyId);
+        return Ok();
     }
 
     [HttpGet("{id:int}/copies/available-count")]
@@ -84,11 +78,8 @@ public class BookController(IBookService bookService) : ControllerBase
     [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        bool ok = await bookService.DeleteBookAsync(id);
-        
-        if(ok) return Ok();
-        
-        return BadRequest();
+        await bookService.DeleteBookAsync(id);
+        return Ok();
     }
     
     [HttpGet("{id:int}")]

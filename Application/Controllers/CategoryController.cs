@@ -1,3 +1,4 @@
+using Library.Exceptions;
 using Library.Model.DTO;
 using Library.Model.Entities;
 using Library.Services;
@@ -24,9 +25,6 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     public async Task<ActionResult<ReadCategory>> GetById(int id)
     {
         Category? category = await categoryService.GetCategoryByIdAsync(id);
-        if (category is null)
-            return NotFound();
-        
         return Ok(ReadCategory.FromCategory(category));
     }
 
@@ -35,7 +33,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     public async Task<ActionResult<List<ReadCategory>>> GetByName([FromQuery] string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return BadRequest("Name is required.");
+            throw new CategoryException("Category name cannot be null or empty");
         
         List<Category> categories = await categoryService.GetCategoryByNameAsync(name);
         List<ReadCategory> readCategories = ReadCategory.FromCategories(categories);
@@ -57,20 +55,15 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
     [Authorize(Roles = "InternalUser")]
     public async Task<ActionResult> Update(int id, [FromBody] UpdateCategory dto)
     {
-        bool ok = await categoryService.UpdateCategoryAsync(id, dto);
-        
-        if(ok) return Ok();
-        
-        return BadRequest();
+        _ = await categoryService.UpdateCategoryAsync(id, dto);
+        return Ok();
     }
 
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "InternalUser")]
     public async Task<ActionResult> Delete(int id)
     {
-        bool ok = await categoryService.DeleteCategoryAsync(id);
-        if(ok) return Ok();
-        
-        return BadRequest();
+        _ = await categoryService.DeleteCategoryAsync(id);
+        return Ok();
     }
 }

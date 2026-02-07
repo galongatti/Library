@@ -14,9 +14,15 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 string? connectionString = builder.Configuration.GetConnectionString("DbConnection");
 
+// Program.cs
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseNpgsql(connectionString).EnableSensitiveDataLogging().EnableDetailedErrors();
+    options.UseNpgsql(connectionString).EnableDetailedErrors();
+    
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging();
+    }
 });
 
 builder.Services

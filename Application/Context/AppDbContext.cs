@@ -8,9 +8,6 @@ namespace Library.Context;
 
 public class AppDbContext : IdentityDbContext<User>
 {
-
-    public IHostEnvironment hostEnvironment { get; set; }
-    
     private static readonly ILoggerFactory _loggerFactory =
         LoggerFactory.Create(builder =>
         {
@@ -28,24 +25,8 @@ public class AppDbContext : IdentityDbContext<User>
     public DbSet<Lend> Lends { get; set; }
     public DbSet<LendItem> LendItems { get; set; }
 
-    public AppDbContext(DbContextOptions<AppDbContext> options, IHostEnvironment hostEnvironment) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        this.hostEnvironment = hostEnvironment;
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder
-                .UseLoggerFactory(_loggerFactory)
-                .EnableDetailedErrors();      // mensagens mais detalhadas
-            
-            if (hostEnvironment.EnvironmentName.Contains("Development"))
-            {
-                optionsBuilder.EnableSensitiveDataLogging();
-            }
-        }
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

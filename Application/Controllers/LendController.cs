@@ -39,9 +39,8 @@ public class LendController(ILendService lendService) : ControllerBase
     [HttpPut("{id:int}/approve")]
     public async Task<IActionResult> Approve([FromRoute] int id, [FromBody] ApproveLend model)
     {
-        bool ok = await lendService.ApproveLendAsync(id, model.ExpectedReturnDate);
-        if (ok) return Ok();
-        return BadRequest();
+        _ = await lendService.ApproveLendAsync(id, model.ExpectedReturnDate);
+        return Ok();
     }
 
     [HttpGet("{id:int}/items")]
@@ -62,24 +61,21 @@ public class LendController(ILendService lendService) : ControllerBase
     [HttpDelete("{lendId:int}/items/{itemId:int}")]
     public async Task<IActionResult> RemoveItem([FromRoute] int lendId, [FromRoute] int itemId)
     {
-        bool ok = await lendService.RemoveItemAsync(lendId, itemId);
-        if (ok) return Ok();
-        return BadRequest();
+        _ = await lendService.RemoveItemAsync(lendId, itemId);
+        return Ok();
     }
 
     [HttpPut("{id:int}/return")]
     public async Task<IActionResult> Return([FromRoute] int id)
     {
-        bool ok = await lendService.ReturnLendAsync(id);
-        if (ok) return Ok();
-        return BadRequest();
+        _ = await lendService.ReturnLendAsync(id);
+        return Ok();
     }
 
     [HttpPut("{id:int}/cancel")]
     public async Task<IActionResult> Cancel([FromRoute] int id)
     {
-        bool ok = await lendService.CancelLendAsync(id);
-        if (ok) return Ok();
-        return BadRequest();
+        _ = await lendService.CancelLendAsync(id);
+        return Ok();
     }
 }

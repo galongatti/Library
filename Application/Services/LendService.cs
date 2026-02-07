@@ -1,58 +1,173 @@
+using Library.Context;
 using Library.Exceptions;
 using Library.Model;
 using Library.Model.DTO;
 using Library.Model.Entities;
 using Library.Repository;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Library.Services;
 
-public class LendService(ILendRepository repository, IBookService bookService) : ILendService
+public class LendService(
+    ILendRepository repository,
+    IBookService bookService,
+    AppDbContext dbContext,
+    ILogger<LendService> logger) : ILendService
 {
     public async Task<List<Lend>> GetLendsAsync()
     {
-        return await repository.GetLendsAsync();
+        logger.LogDebug("Retrieving all lends");
+        var lends = await repository.GetLendsAsync();
+        logger.LogInformation("Retrieved {Count} lends", lends.Count);
+        return lends;
     }
 
     public async Task<Lend> GetLendByIdAsync(int id)
     {
-        Lend? lend = await repository.GetLendByIdAsync(id);
-        return lend ?? throw new LendException("Lend not found");
+        using (logger.BeginScope(new Dictionary<string, object> { ["LendId"] = id }))
+        {
+            logger.LogDebug("Retrieving lend by ID: {LendId}", id);
+
+            Lend? lend = await repository.GetLendByIdAsync(id);
+
+            if (lend is null)
+            {
+                logger.LogWarning("Lend not found: {LendId}", id);
+                throw new LendException("Lend not found");
+            }
+
+            logger.LogDebug("Lend found: {LendId} with status {Status}", id, lend.Status);
+            return lend;
+        }
     }
 
     public async Task<Lend> CreateLendAsync(CreateLend model)
     {
-        Lend lend = model.ToEntity();
-        return await repository.CreateLendAsync(lend);
+        using (logger.BeginScope(new Dictionary<string, object>
+               {
+                   ["Operation"] = "CreateLend",
+                   ["InternalUserId"] = model.InternalUserId,
+                   ["CustomerUserId"] = model.CostumerUserId
+               }))
+        {
+            logger.LogInformation("Creating new lend for customer {CustomerUserId}", model.CostumerUserId);
+
+            Lend lend = model.ToEntity();
+            var createdLend = await repository.CreateLendAsync(lend);
+
+            logger.LogInformation("Lend created successfully with ID: {LendId}", createdLend.Id);
+
+            return createdLend;
+        }
     }
 
     public async Task<bool> ApproveLendAsync(int lendId, DateTime expectedReturnDate)
     {
-        Lend? lend = await repository.GetLendByIdAsync(lendId);
-        if (lend is null) throw new LendException("Lend not found");
-        if (lend.Status != LendStatus.Pending) throw new LendException("Only pending lends can be approved");
+        using (logger.BeginScope(new Dictionary<string, object>
+               {
+                   ["Operation"] = "ApproveLend",
+                   ["LendId"] = lendId,
+                   ["ExpectedReturnDate"] = expectedReturnDate
+               }))
+        {
+            logger.LogInformation("Attempting to approve lend {LendId}", lendId);
 
-        lend.ApproveLend(expectedReturnDate);
-        return await repository.UpdateLendAsync(lend);
+            Lend? lend = await repository.GetLendByIdAsync(lendId);
+
+            if (lend is null)
+            {
+                logger.LogWarning("Lend not found: {LendId}", lendId);
+                throw new LendException("Lend not found");
+            }
+
+            if (lend.Status != LendStatus.Pending)
+            {
+                logger.LogWarning("Cannot approve non-pending lend. Current status: {Status}", lend.Status);
+                throw new LendException("Only pending lends can be approved");
+            }
+
+            lend.ApproveLend(expectedReturnDate);
+            var result = await repository.UpdateLendAsync(lend);
+
+            if (result)
+            {
+                logger.LogInformation("Lend {LendId} approved successfully", lendId);
+            }
+
+            return result;
+        }
     }
 
     public async Task<bool> ReturnLendAsync(int lendId)
     {
-        Lend? lend = await repository.GetLendByIdAsync(lendId);
-        if (lend is null) throw new LendException("Lend not found");
-        if (lend.Status != LendStatus.Lent) throw new LendException("Only lent lends can be returned");
+        using (logger.BeginScope(new Dictionary<string, object>
+               {
+                   ["Operation"] = "ReturnLend",
+                   ["LendId"] = lendId
+               }))
+        {
+            logger.LogInformation("Attempting to return lend {LendId}", lendId);
 
-        lend.ReturnLend();
-        return await repository.UpdateLendAsync(lend);
+            Lend? lend = await repository.GetLendByIdAsync(lendId);
+
+            if (lend is null)
+            {
+                logger.LogWarning("Lend not found: {LendId}", lendId);
+                throw new LendException("Lend not found");
+            }
+
+            if (lend.Status != LendStatus.Lent)
+            {
+                logger.LogWarning("Cannot return non-lent lend. Current status: {Status}", lend.Status);
+                throw new LendException("Only lent lends can be returned");
+            }
+
+            lend.ReturnLend();
+            var result = await repository.UpdateLendAsync(lend);
+
+            if (result)
+            {
+                logger.LogInformation("Lend {LendId} returned successfully", lendId);
+            }
+
+            return result;
+        }
     }
 
     public async Task<bool> CancelLendAsync(int lendId)
     {
-        Lend? lend = await repository.GetLendByIdAsync(lendId);
-        if (lend is null) throw new LendException("Lend not found");
-        if (lend.Status != LendStatus.Pending) throw new LendException("Only pending lends can be cancelled");
+        using (logger.BeginScope(new Dictionary<string, object>
+               {
+                   ["Operation"] = "CancelLend",
+                   ["LendId"] = lendId
+               }))
+        {
+            logger.LogInformation("Attempting to cancel lend {LendId}", lendId);
 
-        lend.CancelLend();
-        return await repository.UpdateLendAsync(lend);
+            Lend? lend = await repository.GetLendByIdAsync(lendId);
+
+            if (lend is null)
+            {
+                logger.LogWarning("Lend not found: {LendId}", lendId);
+                throw new LendException("Lend not found");
+            }
+
+            if (lend.Status != LendStatus.Pending)
+            {
+                logger.LogWarning("Cannot cancel non-pending lend. Current status: {Status}", lend.Status);
+                throw new LendException("Only pending lends can be cancelled");
+            }
+
+            lend.CancelLend();
+            var result = await repository.UpdateLendAsync(lend);
+
+            if (result)
+            {
+                logger.LogInformation("Lend {LendId} cancelled successfully", lendId);
+            }
+
+            return result;
+        }
     }
 
     public async Task<List<LendItem>> GetItemsByLendIdAsync(int lendId)
@@ -62,32 +177,111 @@ public class LendService(ILendRepository repository, IBookService bookService) :
 
     public async Task<LendItem> AddItemAsync(int lendId, AddLendItemModel bookCopyId)
     {
-        Lend? lend = await repository.GetLendByIdAsync(lendId); 
-        if (lend is null) throw new LendException("Lend not found");
-        if (lend.Status != LendStatus.Pending) throw new LendException("Can only add items to a pending lend");
+        using (logger.BeginScope(new Dictionary<string, object>
+               {
+                   ["Operation"] = "AddLendItem",
+                   ["LendId"] = lendId,
+                   ["BookCopyId"] = bookCopyId.BookCopyId
+               }))
+        {
+            logger.LogInformation("Starting transaction to add item to lend: {LendId}, BookCopy: {BookCopyId}",
+                lendId, bookCopyId.BookCopyId);
 
-        bool marked = await bookService.MarkCopyAsLentAsync(bookCopyId.BookCopyId);
-        if (!marked) throw new LendException("Book copy not available");
+            Lend? lend = await repository.GetLendByIdAsync(lendId);
+            if (lend is null)
+            {
+                logger.LogWarning("Lend not found: {LendId}", lendId);
+                throw new LendException("Lend not found");
+            }
 
-        LendItem item = new(lendId, bookCopyId.BookCopyId);
-        return await repository.AddItemAsync(item);
+            if (lend.Status != LendStatus.Pending)
+            {
+                logger.LogWarning("Cannot add item to non-pending lend. Status: {Status}", lend.Status);
+                throw new LendException("Can only add items to a pending lend");
+            }
+
+            logger.LogDebug("Lend found and validated. Status: {Status}", lend.Status);
+
+            logger.LogDebug("Marking book copy as lent: {BookCopyId}", bookCopyId.BookCopyId);
+            bool marked = await bookService.MarkCopyAsLentAsync(bookCopyId.BookCopyId);
+
+            if (!marked)
+            {
+                logger.LogWarning("Book copy not available: {BookCopyId}", bookCopyId.BookCopyId);
+                throw new LendException("Book copy not available");
+            }
+
+            logger.LogDebug("Book copy marked as lent successfully");
+
+            LendItem item = new(lendId, bookCopyId.BookCopyId);
+            logger.LogDebug("Adding item to lend");
+            LendItem addedItem = await repository.AddItemAsync(item);
+
+            logger.LogInformation(
+                "Transaction committed successfully. Item {ItemId} added to lend {LendId}",
+                addedItem.Id,
+                lendId
+            );
+
+            return addedItem;
+        }
     }
 
     public async Task<bool> RemoveItemAsync(int lendId, int itemId)
     {
-        Lend? lend = await repository.GetLendByIdAsync(lendId);
-        
-        if(lend is null) throw new LendException("Lend not found");
-        if(lend.Status != LendStatus.Pending) throw new LendException("Can only remove items to a pending lend");
-        
-        LendItem? item = lend.Items.SingleOrDefault(i => i.Id == itemId);
+        using (logger.BeginScope(new Dictionary<string, object>
+               {
+                   ["Operation"] = "RemoveLendItem",
+                   ["LendId"] = lendId,
+                   ["ItemId"] = itemId
+               }))
+        {
+            logger.LogInformation("Starting transaction to remove item {ItemId} from lend {LendId}", itemId, lendId);
 
-        if (item is null) throw new LendException("Item not found");
 
-        bool removed = await repository.RemoveItemAsync(itemId);
-        if (!removed) return false;
+            Lend? lend = await repository.GetLendByIdAsync(lendId);
 
-        await bookService.MarkCopyAsReturnedAsync(item.BookCopyId);
-        return true;
+            if (lend is null)
+            {
+                logger.LogWarning("Lend not found: {LendId}", lendId);
+                throw new LendException("Lend not found");
+            }
+
+            if (lend.Status != LendStatus.Pending)
+            {
+                logger.LogWarning("Cannot remove item from non-pending lend. Status: {Status}", lend.Status);
+                throw new LendException("Can only remove items to a pending lend");
+            }
+
+            LendItem? item = lend.Items.SingleOrDefault(i => i.Id == itemId);
+
+            if (item is null)
+            {
+                logger.LogWarning("Item {ItemId} not found in lend {LendId}", itemId, lendId);
+                throw new LendException("Item not found");
+            }
+
+            logger.LogDebug("Found item {ItemId} with BookCopyId {BookCopyId}", itemId, item.BookCopyId);
+
+            logger.LogDebug("Removing item from database");
+            bool removed = await repository.RemoveItemAsync(itemId);
+
+            if (!removed)
+            {
+                logger.LogWarning("Failed to remove item {ItemId} from database", itemId);
+                throw new LendException("Failed to remove item");
+            }
+
+            logger.LogDebug("Marking book copy {BookCopyId} as returned", item.BookCopyId);
+            await bookService.MarkCopyAsReturnedAsync(item.BookCopyId);
+
+            logger.LogInformation(
+                "Transaction committed successfully. Item {ItemId} removed from lend {LendId}",
+                itemId,
+                lendId
+            );
+
+            return true;
+        }
     }
 }

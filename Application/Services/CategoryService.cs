@@ -45,8 +45,9 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
         return await categoryRepository.UpdateCategoryAsync(category);
     }
 
-    public async Task<Category?> GetCategoryByIdAsync(int id)
+    public async Task<Category> GetCategoryByIdAsync(int id)
     {
-        return await categoryRepository.GetCategoryByIdAsync(id);
+        Category? category = await categoryRepository.GetCategoryByIdAsync(id);
+        return category ?? throw new CategoryException("Category not found");
     }
 }

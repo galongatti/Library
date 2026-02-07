@@ -20,7 +20,6 @@ public class CreateBook
     public int CategoryId { get; set; }
     
     [Required(ErrorMessage = "PublishedYear is required.")]
-    [Range(1000, 2026, ErrorMessage = "PublishedYear must be between 1000 and current year.")]
     public int PublishedYear {get; set;}
     
     public Book ToEntity() => new(Title, ISBN, PublishedYear, CategoryId);

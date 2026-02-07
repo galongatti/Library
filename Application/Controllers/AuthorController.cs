@@ -36,22 +36,16 @@ public class AuthorController(IAuthorService authorService) : ControllerBase
     [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateAuthor model)
     {
-        bool ok = await authorService.UpdateAuthorAsync(id, model);
-        
-        if(ok) return Ok();
-        
-        return BadRequest();
+        _ = await authorService.UpdateAuthorAsync(id, model);
+        return Ok();
     }
     
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        bool ok = await authorService.DeleteAuthorAsync(id);
-        
-        if(ok) return Ok();
-        
-        return BadRequest();
+        _ = await authorService.DeleteAuthorAsync(id);
+        return Ok();
     }
     
     [HttpGet("{id:int}")]
