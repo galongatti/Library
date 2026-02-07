@@ -24,6 +24,7 @@ public class BookRepository(AppDbContext dbContext) : IBookRepository
         return await dbContext.Books.
             Include(c => c.Category).
             Include(a => a.Authors).
+            Include(c => c.Copies).
             AsNoTracking().ToListAsync();
     }
 

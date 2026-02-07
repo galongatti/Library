@@ -6,7 +6,6 @@ public class BookCopy : BaseEntity
     public string Barcode { get; private set; }
     public bool IsAvailable { get; private set; } = true;
 
-    // Navigation
     public Book Book { get; private set; }
 
     public BookCopy(int bookId, string barcode)

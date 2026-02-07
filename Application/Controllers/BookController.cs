@@ -53,21 +53,14 @@ public class BookController(IBookService bookService) : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("{id:int}/copies")]
-    [Authorize(Roles = "InternalUser,customer")]
-    public async Task<IActionResult> GetCopies([FromRoute] int id)
-    {
-        List<BookCopy> copies = await bookService.GetCopiesByBookIdAsync(id);
-        List<ReadBookCopy> bookCopies = ReadBookCopy.FromBooksCopies(copies);
-        return Ok(bookCopies);
-    }
+
 
     [HttpPost("{id:int}/copies")]
     [Authorize(Roles = "InternalUser")]
     public async Task<IActionResult> AddCopy([FromRoute] int id, [FromBody] AddCopyModel model)
     {
         BookCopy copy = await bookService.AddCopyAsync(id, model.Barcode);
-        return CreatedAtAction(nameof(GetCopies), new { id }, copy);
+        return CreatedAtAction(nameof(Get), new { id }, copy);
     }
 
     [HttpDelete("{bookId:int}/copies/{copyId:int}")]

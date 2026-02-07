@@ -19,7 +19,7 @@ public class CreateUser
     public string Document { get; set; }
 
     [Required]
-    [StringLength(100, MinimumLength = 2)]
+    [StringLength(255, MinimumLength = 2)]
     public string Name { get; set; }
 
     [Required]

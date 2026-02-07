@@ -11,8 +11,10 @@ public class ReadBook
     public ReadCategory Category { get; }
     public string ISBN { get; }
     public List<ReadAuthor> Author { get; }
+    public List<ReadBookCopy> Copies { get; }
 
-    public ReadBook(string title, int id, DateTime createdAt, bool isDeleted, Category category, string ISBN, List<Author> authors = null)
+    public ReadBook(string title, int id, DateTime createdAt, bool isDeleted, Category category, string ISBN,
+        List<Author> authors = null, List<BookCopy> copies = null)
     {
         Title = title;
         this.ISBN = ISBN;
@@ -21,6 +23,7 @@ public class ReadBook
         IsDeleted = isDeleted;
         Category = ReadCategory.FromCategory(category);
         Author = ReadAuthor.FromAuthors(authors);
+        Copies = ReadBookCopy.FromBooksCopies(copies);
     }
 
     public static ReadBook FromBook(Book book) => new(
@@ -30,7 +33,8 @@ public class ReadBook
         isDeleted: book.IsDeleted,
         category: book.Category,
         ISBN: book.ISBN,
-        authors: book.Authors
+        authors: book.Authors,
+        copies: book.Copies
     );
 
     public static List<ReadBook> FromBooks(List<Book> books) =>
