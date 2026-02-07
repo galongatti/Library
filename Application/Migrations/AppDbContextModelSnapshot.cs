@@ -34,7 +34,7 @@ namespace Library.Migrations
 
                     b.HasIndex("BookId");
 
-                    b.ToTable("AuthorBook");
+                    b.ToTable("AuthorBook", (string)null);
                 });
 
             modelBuilder.Entity("Library.Model.Entities.Author", b =>
@@ -58,7 +58,7 @@ namespace Library.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors");
+                    b.ToTable("Authors", (string)null);
                 });
 
             modelBuilder.Entity("Library.Model.Entities.Book", b =>
@@ -94,7 +94,7 @@ namespace Library.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Books");
+                    b.ToTable("Books", (string)null);
                 });
 
             modelBuilder.Entity("Library.Model.Entities.BookCopy", b =>
@@ -126,7 +126,7 @@ namespace Library.Migrations
 
                     b.HasIndex("BookId");
 
-                    b.ToTable("BookCopies");
+                    b.ToTable("BookCopies", (string)null);
                 });
 
             modelBuilder.Entity("Library.Model.Entities.Category", b =>
@@ -150,7 +150,7 @@ namespace Library.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Library.Model.Entities.Lend", b =>
@@ -190,7 +190,7 @@ namespace Library.Migrations
 
                     b.HasIndex("InternalUserId");
 
-                    b.ToTable("Lends");
+                    b.ToTable("Lends", (string)null);
                 });
 
             modelBuilder.Entity("Library.Model.Entities.LendItem", b =>
@@ -219,7 +219,7 @@ namespace Library.Migrations
 
                     b.HasIndex("LendId");
 
-                    b.ToTable("LendItems");
+                    b.ToTable("LendItems", (string)null);
                 });
 
             modelBuilder.Entity("Library.Model.Entities.User", b =>
@@ -300,7 +300,7 @@ namespace Library.Migrations
                         {
                             Id = "29E23309-9F18-4652-8279-E86EA6B634CC",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1e443304-a28a-43fc-a7c9-5c9d92935fe0",
+                            ConcurrencyStamp = "8ce0715e-445f-4c8e-bd09-0bcce3f8d1a5",
                             Document = "1234567",
                             Email = "admin@library.com",
                             EmailConfirmed = true,
@@ -308,9 +308,9 @@ namespace Library.Migrations
                             Name = "ADMIN",
                             NormalizedEmail = "ADMIN@LIBRARY.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBp32Jsre9GYHsj2W/qi5B1tDKdkzTEtFJFkFD/UUgaG4MnoohMWYThj/khJReLYXA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPmoLAivp1UhCfEvee91VdwKu3hAVOj9E6esiW/aPy0O/w/06FlLHkQeyerxfK8POw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "31826443-2b93-4ee7-b6a9-d24acb6067e5",
+                            SecurityStamp = "82fd216c-3bdd-407d-8187-ef7dde88476a",
                             TwoFactorEnabled = false,
                             UserName = "ADMIN"
                         });
